@@ -85,7 +85,7 @@ public class ModelerTrackingSchemaData
     public required string id_document {get; set;}
     public required string id_user {get; set;}
     public required string id_user_ip_address { get; set;}
-    public required int timestamp { get; set;}
+    public required long timestamp { get; set;}
     public required string? id_element {get; set;}
     public required string? type_element {get; set;}
     public required int? duration {get; set; }
