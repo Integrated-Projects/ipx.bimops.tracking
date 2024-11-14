@@ -17,7 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../test_number_2/test_number_2.csproj" />
+    <ProjectReference Include="../ipx.bimops.tracking/ipx.bimops.tracking.csproj" />
+    <ProjectReference Include="../test_number_2/ipx.bimops.tracking.csproj" />
   </ItemGroup>
 
   <ItemGroup>
