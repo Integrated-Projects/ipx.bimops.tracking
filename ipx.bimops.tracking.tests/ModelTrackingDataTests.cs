@@ -15,9 +15,16 @@ public class ModelTrackingDataTests
     {
         Assert.That(test_data != null);
     }
+
     [Test]
     public void ShouldCreateTenPiecesOfData()
     {
         Assert.That(test_data?.Count == 10);
+    }
+
+    [Test]
+    public void ShouldBeAbleToReadCSVFromPosition()
+    {
+        
     }
 }

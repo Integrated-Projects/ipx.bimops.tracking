@@ -18,11 +18,16 @@
 
   <ItemGroup>
     <ProjectReference Include="../ipx.bimops.tracking/ipx.bimops.tracking.csproj" />
-    <ProjectReference Include="../test_number_2/ipx.bimops.tracking.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Using Include="NUnit.Framework" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="fake_modeler_tracking_data.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

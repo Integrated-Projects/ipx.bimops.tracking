@@ -10,6 +10,7 @@ using System.Text.Json;
 
 public class CsvUploader
 {
+    private static int _last_position = 0;
     private static CancellationTokenSource _cts = new CancellationTokenSource();
 
     public static async Task Main(string[] args)
@@ -34,7 +35,7 @@ public class CsvUploader
 
         using var reader = new StreamReader(filePath);
         using var csv = new CsvReader(reader, config);
-        var records = csv.GetRecords<dynamic>().Skip(0); // Start from 0, adjust Skip dynamically in real scenarios
+        var records = csv.GetRecords<dynamic>().Skip(_last_position); // Start from 0, adjust Skip dynamically in real scenarios
 
         var currentChunk = 0;
 
