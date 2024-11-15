@@ -3,14 +3,14 @@ using System.Collections.Generic;
 
 public static class ModelTrackingDataCreator
 {
-    public static List<ModelerTrackingSchemaData> Create()
+    public static List<ModelerTrackingSchema> Create()
     {
         var random = new Random();
-        var fakeData = new List<ModelerTrackingSchemaData>();
+        var fakeData = new List<ModelerTrackingSchema>();
 
         for (int i = 0; i < 10; i++)
         {
-            fakeData.Add(new ModelerTrackingSchemaData
+            fakeData.Add(new ModelerTrackingSchema
             {
                 id_project = Guid.NewGuid().ToString(),
                 id_document = Guid.NewGuid().ToString(),
@@ -26,7 +26,7 @@ public static class ModelTrackingDataCreator
         return fakeData;
     }
 
-    public static void PrintData(List<ModelerTrackingSchemaData> data)
+    public static void PrintData(List<ModelerTrackingSchema> data)
     {
         foreach (var record in data)
         {
