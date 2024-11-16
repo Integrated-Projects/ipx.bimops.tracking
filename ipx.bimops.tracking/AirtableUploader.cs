@@ -1,10 +1,25 @@
-using System.Text.Json;
 using AirtableApiClient;
-using CsvHelper.Expressions;
+using ipx.bimops.tracking;
 
 public static class AirtableUploader
 {
-    public static async Task UploadChunkToAirtable(List<ModelerTrackingSchema> records, string airtableAPIKey, string baseId, string tableId)
+    public static async Task UploadChunksToAirtable(IEnumerable<ModelerTrackingSchema> records, int chunkSize, Credentials creds, CancellationToken cancellationToken)
+    {
+        var currentChunk = 0;
+
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            var chunk = records.Skip(currentChunk * chunkSize).Take(chunkSize).ToList();
+
+            if (!chunk.Any()) break;
+
+            await AirtableUploader.UploadRecordsToAirtable(chunk, creds.AirtableAPIKey, creds.AirtableBaseTrackingId, creds.AirtableTrackingTableId);
+
+            currentChunk++;
+        }
+    }
+
+    public static async Task UploadRecordsToAirtable(List<ModelerTrackingSchema> records, string airtableAPIKey, string baseId, string tableId)
     {
         using (AirtableBase airtableBase = new AirtableBase(airtableAPIKey, baseId))
         {

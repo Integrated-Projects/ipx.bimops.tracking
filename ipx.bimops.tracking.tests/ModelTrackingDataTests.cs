@@ -32,9 +32,18 @@ public class ModelTrackingDataTests
     }
 
     [Test]
+    public void ShouldBeAbleToProcessCsvInChunks()
+    {
+        var filePath = "./fake_modeler_tracking_data.csv";
+        var records = CSVParser.ProcessCsvInChunks(filePath, 100, new CancellationToken()).ToList();
+
+        Assert.That(records.Count, Is.EqualTo(100));
+    }
+
+    [Test]
     public async Task UploaderShouldBeAbleToUploadCSVToAirtable()
     {
-        await AirtableUploader.UploadChunkToAirtable(test_data!, airtableAPIKey, baseId, tableId);
+        await AirtableUploader.UploadRecordsToAirtable(test_data!, airtableAPIKey, baseId, tableId);
         var records = await GetRecordsFromAirtable();
 
         Assert.That(records.Count(), Is.EqualTo(10));

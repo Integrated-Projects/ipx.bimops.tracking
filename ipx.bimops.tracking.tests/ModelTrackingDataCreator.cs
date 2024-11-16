@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 public static class ModelTrackingDataCreator
 {
-    public static List<ModelerTrackingSchema> Create()
+    public static List<ModelerTrackingSchema> Create(int count = 10)
     {
         var random = new Random();
         var fakeData = new List<ModelerTrackingSchema>();
 
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < count; i++)
         {
             fakeData.Add(new ModelerTrackingSchema
             {
