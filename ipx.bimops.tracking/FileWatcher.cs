@@ -14,9 +14,6 @@ public static class FileWatcher
         };
 
         watcher.Changed += OnChanged;
-        watcher.Created += OnChanged;
-        watcher.Renamed += OnRenamed;
-        watcher.Deleted += OnDeleted;
 
         watcher.EnableRaisingEvents = true;
 
@@ -36,15 +33,5 @@ public static class FileWatcher
         {
             Console.WriteLine("File is in use, retrying later...");
         }
-    }
-
-    private static void OnRenamed(object sender, RenamedEventArgs e)
-    {
-        Console.WriteLine($"File {e.OldFullPath} renamed to {e.FullPath}.");
-    }
-
-    private static void OnDeleted(object sender, FileSystemEventArgs e)
-    {
-        Console.WriteLine($"File {e.FullPath} has been deleted.");
     }
 }
