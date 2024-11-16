@@ -52,13 +52,13 @@ public class ModelTrackingDataTests
     [TearDown]
     public async Task ClearTestingData()
     {
-        using(AirtableBase ab = new(airtableAPIKey, baseId))
+        using (AirtableBase ab = new(airtableAPIKey, baseId))
         {
             IEnumerable<AirtableRecord> records = (await ab.ListRecords(tableId)).Records;
 
-            if(!records.Any()) return; // if there are no records, return
+            if (!records.Any()) return; // if there are no records, return
 
-            foreach(AirtableRecord r in records)
+            foreach (AirtableRecord r in records)
             {
                 await ab.DeleteRecord(tableId, r.Id);
             }

@@ -19,7 +19,9 @@ public static class ModelTrackingDataCreator
                 timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
                 id_element = i % 2 == 0 ? Guid.NewGuid().ToString() : null,
                 type_element = i % 2 == 0 ? "Wall" : null,
-                duration = i % 2 == 0 ? random.Next(10, 300) : null
+                duration = i % 2 == 0 ? random.Next(10, 300) : null,
+                action_project = (action_project)random.Next(0, 5),
+                action_element = i % 2 == 0 ? (action_element)random.Next(0, 2) : null
             });
         }
 
