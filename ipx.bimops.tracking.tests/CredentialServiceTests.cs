@@ -1,3 +1,4 @@
+using System.Runtime;
 using NUnit.Framework;
 
 namespace ipx.bimops.tracking.tests;
@@ -10,14 +11,14 @@ public class CredentialServiceTests
     }
 
     [Test]
-    public void ShouldThrowErrorMessageIfTryingToRetrieveCredentialsWithoutDataInResources()
-    {
-        Assert.Throws<Exception>(() => CredentialService.GetResourceCredentials());
+    public void ShouldBeAbleToGetCreds()
+    {  
+        Assert.That(CredentialService.GetCreds("appsettings.sample.json"), Is.EqualTo("your-client-id"));
     }
-    
-    // [Test]
-    // public void ShouldThrowErrorMessageIfTryingToRetrieveBearerTokenWithoutCredentials()
-    // {
-    //     Assert.ThrowsAsync<Exception>(async () => await CredentialService.GetBearerToken());
-    // }
+
+    [Test]
+    public void ShouldThrowAnExceptionIfNoCredentialFileIsGivem()
+    {  
+        Assert.Throws<Exception>(() => CredentialService.GetCreds());
+    }
 }
