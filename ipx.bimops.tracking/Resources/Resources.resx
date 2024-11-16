@@ -1,0 +1,8 @@
+<root>
+  <data name="ClientId" xml:space="preserve">
+    <value>your-client-id</value>
+  </data>
+  <data name="ClientSecret" xml:space="preserve">
+    <value>your-client-secret</value>
+  </data>
+</root>
