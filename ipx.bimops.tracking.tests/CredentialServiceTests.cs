@@ -12,8 +12,21 @@ public class CredentialServiceTests
 
     [Test]
     public void ShouldBeAbleToGetCreds()
-    {  
-        Assert.That(CredentialService.GetCreds("appsettings.sample.json"), Is.EqualTo("your-client-id"));
+    {
+        var creds = new Credentials
+        {
+            AirtableAPIKey = "your-airtable-key",
+            AirtableBaseTrackingId = "your-airtable-base-id",
+            AirtableTrackingTableId = "your-airtable-table-id",
+            AirtableTrackingTableId_Testing = "your-airtable-table-id-testing"
+        };
+
+        var result = CredentialService.GetCreds("appsettings.sample.json");
+
+        Assert.That(result.AirtableAPIKey, Is.EqualTo(creds.AirtableAPIKey));
+        Assert.That(result.AirtableBaseTrackingId, Is.EqualTo(creds.AirtableBaseTrackingId));
+        Assert.That(result.AirtableTrackingTableId, Is.EqualTo(creds.AirtableTrackingTableId));
+        Assert.That(result.AirtableTrackingTableId_Testing, Is.EqualTo(creds.AirtableTrackingTableId_Testing));
     }
 
     [Test]

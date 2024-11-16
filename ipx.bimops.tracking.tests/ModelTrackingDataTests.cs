@@ -5,14 +5,15 @@ namespace ipx.bimops.tracking.tests;
 public class ModelTrackingDataTests
 {
     internal List<ModelerTrackingSchema>? test_data;
-    internal string airtableAPIKey = "pat98Z02t5tSUtpfc.65ec65631c9b38c7d17d88b278ed4ec37f56ddb6c59aa9b270954f7ca0915177";
-    internal string baseId = "appNGZd2un2U80HlE";
-    internal string tableId = "tbly0YCApVX84yP83";
+    internal string airtableAPIKey = "";
+    internal string baseId = "";
+    internal string tableId = "";
 
     [SetUp]
     public void Setup()
     {
         test_data = ModelTrackingDataCreator.Create();
+        
     }
 
     [Test]
