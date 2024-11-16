@@ -13,7 +13,10 @@ public class ModelTrackingDataTests
     public void Setup()
     {
         test_data = ModelTrackingDataCreator.Create();
-        
+        var creds = CredentialService.GetCreds("appsettings.json");
+        airtableAPIKey = creds.AirtableAPIKey;
+        baseId = creds.AirtableBaseTrackingId;
+        tableId = creds.AirtableTrackingTableId_Testing;
     }
 
     [Test]
@@ -27,12 +30,6 @@ public class ModelTrackingDataTests
     {
         Assert.That(test_data?.Count, Is.EqualTo(10));
     }
-
-    // [Test]
-    // public void ShouldBeAbleToReadCSVFromPosition()
-    // {
-    //     Assert.Fail();
-    // }
 
     [Test]
     public async Task UploaderShouldBeAbleToUploadCSVToAirtable()

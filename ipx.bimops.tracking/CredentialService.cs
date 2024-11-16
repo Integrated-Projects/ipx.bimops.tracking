@@ -13,9 +13,6 @@ public class CredentialService
             .AddJsonFile(settingsFilePath)
             .Build();
 
-        string? clientId = configuration["ClientId"];
-        Console.WriteLine($"Client ID: {clientId}");
-
         var creds = new Credentials
         {
             AirtableAPIKey = configuration["AirtableAPIKey"],
