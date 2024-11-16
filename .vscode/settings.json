@@ -1,3 +1,5 @@
 {
-    "dotnet.defaultSolution": "test_number_2.sln"
+    "dotnet.defaultSolution": "test_number_2.sln",
+    "editor.defaultFormatter": "ms-dotnettools.csharp",
+    "editor.formatOnSave": true
 }
