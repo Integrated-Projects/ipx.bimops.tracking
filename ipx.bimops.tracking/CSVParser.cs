@@ -48,7 +48,7 @@ public class ModelerTrackingSchemaMap : ClassMap<ModelerTrackingSchema>
 }
 public class NullableDoubleConverter : DefaultTypeConverter
 {
-    public override object ConvertFromString(string text, IReaderRow row, MemberMapData memberMapData)
+    public override object? ConvertFromString(string text, IReaderRow row, MemberMapData memberMapData)
     {
         if (string.IsNullOrWhiteSpace(text))
         {
@@ -88,7 +88,7 @@ public class NullableEnumConverter<T> : DefaultTypeConverter where T : struct, E
         throw new TypeConverterException(this, memberMapData, text ?? "null", row.Context);
     }
 
-    public override string ConvertToString(object? value, IWriterRow row, MemberMapData memberMapData)
+    public override string? ConvertToString(object? value, IWriterRow row, MemberMapData memberMapData)
     {
         if (value == null)
         {

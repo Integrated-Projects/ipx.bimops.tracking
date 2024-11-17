@@ -1,6 +1,5 @@
-﻿using CsvHelper;
-using CsvHelper.Configuration;
-using ipx.bimops.tracking;
+﻿
+namespace ipx.bimops.tracking;
 
 public class Program
 {

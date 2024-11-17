@@ -1,5 +1,6 @@
 using AirtableApiClient;
-using ipx.bimops.tracking;
+
+namespace ipx.bimops.tracking;
 
 public static class AirtableUploader
 {

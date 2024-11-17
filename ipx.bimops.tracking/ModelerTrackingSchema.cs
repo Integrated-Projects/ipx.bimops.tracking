@@ -1,3 +1,4 @@
+namespace ipx.bimops.tracking;
 
 public class ModelerTrackingSchema
 {
