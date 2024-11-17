@@ -34,7 +34,7 @@ public class ModelTrackingDataTests
     [Test]
     public void ShouldBeAbleToProcessCsvInChunks()
     {
-        var filePath = "./fake_modeler_tracking_data.csv";
+        var filePath = "./Utils/fake_modeler_tracking_data.csv";
         var records = CSVParser.ProcessCsvInChunks(filePath, 100, new CancellationToken()).ToList();
 
         Assert.That(records.Count, Is.EqualTo(100));
