@@ -1,38 +1,49 @@
-
-
 namespace ipx.bimops.tracking;
 
-public static class FileWatcher
-{
-    public static void Watch(string filePath)
-    {
-        string directoryPath = Path.GetDirectoryName(filePath);
-        string fileName = Path.GetFileName(filePath);
+using System;
+using System.IO;
 
-        using var watcher = new FileSystemWatcher(directoryPath, fileName)
+public class FileWatcher : IDisposable
+{
+    private readonly FileSystemWatcher _watcher;
+
+    public event Action<string> OnFileChanged;
+
+    public FileWatcher(string filePath)
+    {
+        var directoryPath = Path.GetDirectoryName(filePath);
+        var fileName = Path.GetFileName(filePath);
+
+        _watcher = new FileSystemWatcher(directoryPath, fileName)
         {
-            NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.Size
+            NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size
         };
 
-        watcher.Changed += OnChanged;
-
-        watcher.EnableRaisingEvents = true;
-
-        Console.WriteLine($"Watching for changes in {filePath}. Press Enter to exit.");
-        Console.ReadLine(); // Keep the program running
+        _watcher.Changed += (s, e) => OnFileChanged?.Invoke(e.FullPath);
+        _watcher.EnableRaisingEvents = true;
     }
 
-    private static void OnChanged(object sender, FileSystemEventArgs e)
+    public void WriteWithRetries()
     {
-        Console.WriteLine($"File {e.FullPath} has been changed.");
-        try
-        {
-            var lines = File.ReadAllLines(e.FullPath);
-            Console.WriteLine($"File now contains {lines.Length} lines.");
-        }
-        catch (IOException)
-        {
-            Console.WriteLine("File is in use, retrying later...");
-        }
+        // I start writing some data to the JSON
+
+        // I get a FileLockedException
+
+        // try - catch
+
+        // On catching the Exception, 
+        // add a delay to wait 500ms?
+        // try exponential backoff, increase the delay time a bit more on each retry
+        // Loop a certain amount of times to access the locked data
+    }
+
+    public void Stop()
+    {
+        _watcher.EnableRaisingEvents = false;
+    }
+
+    public void Dispose()
+    {
+        _watcher?.Dispose();
     }
 }
