@@ -3,9 +3,15 @@ using System.Text.Json;
 
 namespace ipx.bimops.tracking;
 
-public static class SessionHandler
+public interface ISessionHandler
 {
-    public static Session? GetSessionInfoFromJSON(string filePath)
+    Session? GetSessionInfoFromJSON(string filePath);
+    bool WriteSessionInfoToJSON(string filePath, string? sessionId = null, int? sessionLastWrite = null, int? sessionLastRead = null, bool? sessionActive = null, int retryAttempt = 0);
+}
+
+public class SessionHandler : ISessionHandler
+{
+    public Session? GetSessionInfoFromJSON(string filePath)
     {
         Session? session = null;
 
@@ -25,7 +31,7 @@ public static class SessionHandler
         return session;
     }
 
-    public static bool WriteSessionInfoToJSON(string filePath, string? sessionId = null, int? sessionLastWrite = null, int? sessionLastRead = null, bool? sessionActive = null)
+    public bool WriteSessionInfoToJSON(string filePath, string? sessionId = null, int? sessionLastWrite = null, int? sessionLastRead = null, bool? sessionActive = null, int retryAttempt = 0)
     {
         var sessionPrev = GetSessionInfoFromJSON(filePath);
 
@@ -43,9 +49,21 @@ public static class SessionHandler
             File.WriteAllText(filePath, jsonString);
             return true;
         }
-        catch (Exception ex)
+
+        // On catching the FileLockedException, 
+        // add a delay to wait 500ms?
+        // try exponential backoff, increase the delay time a bit more on each retry
+        // Loop a certain amount of times to access the locked data
+        catch (IOException ex)
         {
-            Console.WriteLine($"An error occurred: {ex.Message}");
+            if (retryAttempt < 10)
+            {
+                Console.WriteLine($"The file is locked: {ex.Message}");
+                var iter = retryAttempt + 1;
+                Thread.Sleep(50 * iter);
+                WriteSessionInfoToJSON(filePath, sessionId, sessionLastWrite, sessionLastRead, sessionActive, iter);
+            }
+
             return false;
         }
     }

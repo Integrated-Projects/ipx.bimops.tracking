@@ -23,20 +23,6 @@ public class FileWatcher : IDisposable
         _watcher.EnableRaisingEvents = true;
     }
 
-    public void WriteWithRetries()
-    {
-        // I start writing some data to the JSON
-
-        // I get a FileLockedException
-
-        // try - catch
-
-        // On catching the Exception, 
-        // add a delay to wait 500ms?
-        // try exponential backoff, increase the delay time a bit more on each retry
-        // Loop a certain amount of times to access the locked data
-    }
-
     public void Stop()
     {
         _watcher.EnableRaisingEvents = false;

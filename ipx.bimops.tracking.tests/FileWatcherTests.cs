@@ -1,63 +1,71 @@
 using NUnit.Framework;
-using NUnit.Framework;
 using System;
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
 
-namespace ipx.bimops.tracking.tests;
-
-public class FileWatcherTests
+namespace ipx.bimops.tracking.tests
 {
-    private string _tempFilePath;
-
-    [SetUp]
-    public void Setup()
+    [TestFixture]
+    public class FileWatcherTests
     {
-        _tempFilePath = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid()}.csv");
-        File.WriteAllText(_tempFilePath, "Initial content");
-    }
+        private string _tempFilePath;
+        private FileWatcher? _fileWatcher;
 
-    [TearDown]
-    public void Teardown()
-    {
-        if (File.Exists(_tempFilePath))
+        [SetUp]
+        public void Setup()
         {
-            File.Delete(_tempFilePath);
+            // Create a temporary file
+            _tempFilePath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}.csv");
+            File.WriteAllText(_tempFilePath, "Line 1\nLine 2\nLine 3\n");
         }
-    }
 
-    [Test]
-    public async Task FileWatcher_ShouldTriggerOnFileChanged()
-    {
-        var tcs = new TaskCompletionSource<string>();
-
-        using (var watcher = new FileWatcher(_tempFilePath))
+        [TearDown]
+        public void TearDown()
         {
-            int lineCount = 0;
-            void OnChangedHandler(string path)
+            // Clean up the temporary file and stop the watcher
+            _fileWatcher?.Dispose();
+            if (File.Exists(_tempFilePath))
             {
-                tcs.TrySetResult(path); // Signal the task that the event has fired
-                lineCount = File.ReadAllLines(path).Length;
-                Assert.That(lineCount, Is.GreaterThan(1));
+                File.Delete(_tempFilePath);
             }
+        }
 
-            Assert.That(lineCount, Is.EqualTo(1));
+        [Test]
+        public void FileWatcher_Should_Trigger_OnFileChanged_When_File_Is_Updated()
+        {
+            // Arrange
+            var fileChanged = new ManualResetEvent(false); // Used to wait for the event
+            int initialLineCount = File.ReadLines(_tempFilePath).Count();
+            int newLineCount = 0;
 
-            watcher.OnFileChanged += OnChangedHandler;
+            _fileWatcher = new FileWatcher(_tempFilePath);
+            _fileWatcher.OnFileChanged += path =>
+            {
+                // Ensure we read after the file is fully updated
+                Thread.Sleep(100); // Slight delay to allow for the update to propagate
+                newLineCount = File.ReadLines(path).Count();
+                fileChanged.Set(); // Signal that the event was triggered
+            };
 
-            // Modify the file to trigger the OnChanged event
-            File.AppendAllText(_tempFilePath, "New content");
-            lineCount = File.ReadAllLines(_tempFilePath).Length;
+            // Act
+            AppendNewLines(_tempFilePath, new[] { "Line 4", "Line 5" });
+            var eventTriggered = fileChanged.WaitOne(6000); // Wait up to 2 seconds for the event
 
-
-            // Wait for the event to be triggered or timeout
-            var filePath = await Task.WhenAny(tcs.Task, Task.Delay(2000)) == tcs.Task
-                ? tcs.Task.Result
-                : null;
-
-            // watcher.OnFileChanged -= OnChangedHandler; // Unsubscribe
-            // watcher.Stop(); // Stop the watcher
+            // Assert
+            Assert.That(eventTriggered, Is.True, "OnFileChanged event was not triggered.");
+            Assert.That(newLineCount, Is.EqualTo(initialLineCount + 2), "The line count is not what it should be");
+        }
+        private void AppendNewLines(string filePath, string[] newLines)
+        {
+            using (var stream = new FileStream(filePath, FileMode.Append, FileAccess.Write, FileShare.None))
+            using (var writer = new StreamWriter(stream))
+            {
+                foreach (var line in newLines)
+                {
+                    writer.WriteLine(line);
+                }
+                writer.Flush(); // Ensure content is flushed to disk
+            }
         }
     }
 }
