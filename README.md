@@ -7,12 +7,12 @@ A key part of Iso's functionality is to track data within a Revit session so tha
 3. The uploading process of tracked data continues even when Revit is closed or it crashes
 
 
-## What Does This Do?
+### What Does This Do?
 This is one of a two-part system for tracking modeler activity:
 1. The first part, the *DataCollector* collects all relevant data from Revit writes to a csv file (@symonkipkemei is actively working on this)
 2. The second part, the *WatcherUploader* tracks any changes on the csv file and json file independently & uploads the data to airtable (@prestonsmithII is actively working on this)
 
-## Setup
+### Setup
 - Pull the code from Github
 - To run, you should use the commandline to enter `dotnet run <args>`
 - Available arguments, or `args` are:
