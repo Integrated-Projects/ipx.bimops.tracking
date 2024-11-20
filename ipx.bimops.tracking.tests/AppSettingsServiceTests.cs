@@ -3,7 +3,7 @@ using NUnit.Framework;
 
 namespace ipx.bimops.tracking.tests;
 
-public class CredentialServiceTests
+public class AppSettingsServiceTests
 {
     [SetUp]
     public void Setup()
@@ -13,7 +13,7 @@ public class CredentialServiceTests
     [Test]
     public void ShouldBeAbleToGetCreds()
     {
-        var creds = new Credentials
+        var creds = new AppSettings
         {
             AirtableAPIKey = "your-airtable-key",
             AirtableBaseTrackingId = "your-airtable-base-id",
@@ -21,7 +21,7 @@ public class CredentialServiceTests
             AirtableTrackingTableId_Testing = "your-airtable-table-id-testing"
         };
 
-        var result = CredentialService.GetCreds("appsettings.sample.json");
+        var result = AppSettingsService.GetCreds("appsettings.sample.json");
 
         Assert.That(result.AirtableAPIKey, Is.EqualTo(creds.AirtableAPIKey));
         Assert.That(result.AirtableBaseTrackingId, Is.EqualTo(creds.AirtableBaseTrackingId));
@@ -31,7 +31,7 @@ public class CredentialServiceTests
 
     [Test]
     public void ShouldThrowAnExceptionIfNoCredentialFileIsGivem()
-    {  
-        Assert.Throws<Exception>(() => CredentialService.GetCreds());
+    {
+        Assert.Throws<Exception>(() => AppSettingsService.GetCreds());
     }
 }

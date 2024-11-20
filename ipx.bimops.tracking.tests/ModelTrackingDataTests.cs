@@ -13,7 +13,7 @@ public class ModelTrackingDataTests
     public void Setup()
     {
         test_data = ModelTrackingDataCreator.Create();
-        var creds = CredentialService.GetCreds("appsettings.json");
+        var creds = AppSettingsService.GetCreds("appsettings.json");
         airtableAPIKey = creds.AirtableAPIKey;
         baseId = creds.AirtableBaseTrackingId;
         tableId = creds.AirtableTrackingTableId_Testing;

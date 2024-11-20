@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
-using ipx.bimops.tracking;
+
+namespace ipx.bimops.tracking;
 
 public static class ModelTrackingDataCreator
 {

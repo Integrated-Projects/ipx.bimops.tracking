@@ -4,7 +4,7 @@ namespace ipx.bimops.tracking;
 
 public static class AirtableUploader
 {
-    public static async Task UploadChunksToAirtable(IEnumerable<ModelerTrackingSchema> records, int chunkSize, Credentials creds, CancellationToken cancellationToken)
+    public static async Task UploadChunksToAirtable(IEnumerable<ModelerTrackingSchema> records, int chunkSize, AppSettings creds, CancellationToken cancellationToken)
     {
         var currentChunk = 0;
 
@@ -14,7 +14,7 @@ public static class AirtableUploader
 
             if (!chunk.Any()) break;
 
-            await AirtableUploader.UploadRecordsToAirtable(chunk, creds.AirtableAPIKey, creds.AirtableBaseTrackingId, creds.AirtableTrackingTableId);
+            await AirtableUploader.UploadRecordsToAirtable(chunk, creds.AirtableAPIKey, creds.AirtableBaseTrackingId, creds.Environment == "prod" ? creds.AirtableTrackingTableId : creds.Environment == "test" ? creds.AirtableTrackingTableId_Testing : creds.AirtableTrackingTableId_Staging);
 
             currentChunk++;
         }

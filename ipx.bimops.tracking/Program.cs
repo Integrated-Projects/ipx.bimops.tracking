@@ -14,6 +14,7 @@ public class Program
     private static int _cursor = 0;
     private static int _chunkSize = 100;
     private static FileWatcher? watcherCSV;
+    private static bool ShouldGenerateFakeData = false;
 
     public static void SetSessionHandler(ISessionHandler sessionHandler)
     {
@@ -22,14 +23,43 @@ public class Program
 
     public static void ValidateArgs(string[]? args)
     {
-        PathCSV = args != null && args.Length > 0 ? args[0] : null;
-        PathJSON = args != null && args.Length > 1 ? args[1] : null;
+        ShouldGenerateFakeData = args != null && args.Length > 0 && args[0] == "--generateFakeData";
+
+        if (ShouldGenerateFakeData)
+        {
+            GenerateFakeData();
+        }
+        else
+        {
+            PathCSV = args != null && args.Length > 0 ? args[0] : null;
+            PathJSON = args != null && args.Length > 1 ? args[1] : null;
+        }
 
         if (PathCSV == null) throw new Exception("Can't find CSV location");
         if (PathJSON == null) throw new Exception("Can't find JSON location");
 
         Console.WriteLine($"Will be watching the CSV at {PathCSV}");
         Console.WriteLine($"Will be watching the JSON at {PathJSON}");
+    }
+
+    public static void GenerateFakeData()
+    {
+        Console.WriteLine($"Generating fake data and setting the CSV & JSON paths accordingly");
+        // if generate fake data, use the modeldata creator to create some data
+        var data = ModelTrackingDataCreator.Create(100);
+        var id = Guid.NewGuid();
+
+        // set PATHCSV & PATHJSON
+        PathCSV = Path.Combine(Path.GetTempPath(), $"{id}.csv");
+        PathJSON = Path.Combine(Path.GetTempPath(), $"{id}.json");
+        string csvData = string.Concat($"{ModelerTrackingSchema.GetCSVHeader()}\n", string.Join("\n", data.Select(d => d.ToCSV())));
+
+        // write this to a CSV close to the application
+        File.WriteAllText(PathCSV, csvData);
+        var lineCount = File.ReadLines(PathCSV).Count();
+
+        // write this to a JSON close to the application
+        _sessionHandler.WriteSessionInfoToJSON(PathJSON, id.ToString(), lineCount, 0, true);
     }
 
     public static void SetSessionData()
@@ -94,7 +124,7 @@ public class Program
                 // I should send off chunks of the CSV 100 at at time until I have reached the MAX
                 var chunks = CSVParser.ProcessCsvInChunks(PathCSV, _chunkSize, _cts.Token, _cursor);
                 var chunkCount = chunks.Count(); // may have fewer than 100 chunks 
-                await AirtableUploader.UploadChunksToAirtable(chunks, chunkCount, CredentialService.GetCreds("appsettings.json"), _cts.Token);
+                await AirtableUploader.UploadChunksToAirtable(chunks, chunkCount, AppSettingsService.GetCreds("appsettings.json"), _cts.Token);
                 _cursor += chunkCount; // update cursor with the amount of items uploaded
                 _sessionHandler.WriteSessionInfoToJSON(PathJSON, null, null, _cursor);
             }
