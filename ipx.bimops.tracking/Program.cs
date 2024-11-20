@@ -27,33 +27,56 @@ public class Program
 
         if (PathCSV == null) throw new Exception("Can't find CSV location");
         if (PathJSON == null) throw new Exception("Can't find JSON location");
+
+        Console.WriteLine($"Will be watching the CSV at {PathCSV}");
+        Console.WriteLine($"Will be watching the JSON at {PathJSON}");
+    }
+
+    public static void SetSessionData()
+    {
+        if (PathJSON == null) return;
+
+        Console.WriteLine($"Getting session data from {PathJSON}");
+        var session = _sessionHandler.GetSessionInfoFromJSON(PathJSON);
+        if (session == null)
+        {
+            Console.WriteLine($"The session is NULL!");
+            return;
+        }
+
+        Console.WriteLine($"Session is available and has {session.LastWrite} writes and {session.LastRead} reads");
+
+        if ((bool)!session.SessionActive) IsSessionActive = false;
+        Console.WriteLine((session.SessionActive ?? false) ? $"The session is currently active" : "The session is no longer active");
+
+        Console.WriteLine($"Setting cursor to last read state");
+        _cursor = session.LastRead ?? 0;
+
+        // If I reach the MAX, I should continue watching the JSON for changes until the session marks itself as `inactive`
+        if (_cursor == session.LastWrite)
+        {
+            Console.WriteLine($"The Program has completed writing all relevant data at the moment");
+            ShouldUploadData = false;
+        }
+
+        // But if the session is inactive AND I've already uploaded everything, the session is complete
+        SessionUploadComplete = !IsSessionActive && !ShouldUploadData;
+        Console.WriteLine($"The session has completed the uploads");
     }
 
     public static void OnSessionDataUpdated(string path)
     {
-        Task.Run(() =>
-        {
-            if (PathJSON == null) return;
-            var session = _sessionHandler.GetSessionInfoFromJSON(PathJSON);
-            if (session == null) return;
-
-            if ((bool)!session.SessionActive) IsSessionActive = false;
-
-            if (_cursor == session.LastRead) return;
-
-            _cursor = session.LastRead ?? 0;
-
-            // If I reach the MAX, I should continue watching the JSON for changes until the session marks itself as `inactive`
-            if (session.LastRead == session.LastWrite) ShouldUploadData = false;
-
-            // But if the session is inactive AND I've already uploaded everything, the session is complete
-            SessionUploadComplete = !IsSessionActive && !ShouldUploadData;
-        });
+        Task.Run(SetSessionData);
     }
 
     public static async Task Main(string[]? args)
     {
+        Console.WriteLine("Starting program...");
         ValidateArgs(args);
+
+        Console.WriteLine("Setting session data.");
+        SetSessionData();
+        Console.WriteLine("Session data is set - beginning file watch.");
 
         // what I want to happen is that a watcher watches the CSV
         watcherCSV = new FileWatcher(PathCSV);
@@ -80,5 +103,6 @@ public class Program
             Console.WriteLine("Resting for 1 second");
             Thread.Sleep(1000);
         }
+        Console.WriteLine("Program complete!");
     }
 }
