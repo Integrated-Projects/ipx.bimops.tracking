@@ -3,3 +3,5 @@ obj
 .DS_Store
 
 /ipx.bimops.tracking/appsettings.json
+.DS_Store
+/ipx.bimops.tracking.tests/.DS_Store
