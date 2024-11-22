@@ -21,9 +21,18 @@ public class Program
         _sessionHandler = sessionHandler;
     }
 
+    /**
+        * Validates the arguments passed to the program
+        * Arguments should be able to be passed in any order
+        * Valid arguments are:
+        * 1. --generateFakeData (no value necessary)
+        * 2. --pathToCSV="path/to/csv"
+        * 3. --pathToJSON="path/to/json"
+        * @param args
+    */
     public static void ValidateArgs(string[]? args)
     {
-        ShouldGenerateFakeData = args != null && args.Length > 0 && args[0] == "--generateFakeData";
+        ShouldGenerateFakeData = args != null && args.Length > 0 && args.Any(arg => arg == "--generateFakeData");
 
         if (ShouldGenerateFakeData)
         {
@@ -31,8 +40,18 @@ public class Program
         }
         else
         {
-            PathCSV = args != null && args.Length > 0 ? args[0] : null;
-            PathJSON = args != null && args.Length > 1 ? args[1] : null;
+            var csvIndex = args.Any(arg => arg.Contains("--pathToCSV"));
+            var jsonIndex = args.Any(arg => arg.Contains("--pathToJSON"));
+
+            if (csvIndex)
+            {
+                PathCSV = args != null && args.Length > 0 ? args.First(arg => arg.Contains("--pathToCSV")).Split("=")[1] : null;
+            }
+
+            if (jsonIndex)
+            {
+                PathJSON = args != null && args.Length > 0 ? args.First(arg => arg.Contains("--pathToJSON")).Split("=")[1] : null;
+            }
         }
 
         if (PathCSV == null) throw new Exception("Can't find CSV location");
