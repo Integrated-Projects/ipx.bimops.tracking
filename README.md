@@ -16,6 +16,9 @@ This is one of a two-part system for tracking modeler activity:
 - Pull the code from Github
 - To run, you should use the commandline to enter `dotnet run <args>`
 - Available arguments, or `args` are:
--   --generateFakeData
+  * 1. --generateFakeData (no value necessary) - generates fake data
+  * 2. --pathToCSV="path/to/csv" - the path to the CSV data you'd like to watch and upload from
+  * 3. --pathToJSON="path/to/json" - the path to the JSON data you'd like to watch and stream status to/from
+  * 4. --simulateRandomData (no value necessary) - new! will simulate new data being added to your CSV randomly throughout the process
 
-- When running, if you'd like to generate fake data to test things out you can pass an argument `"--generateFakeData"` which will automatically generate CSV and JSON data for the program to use
+- When running, if you'd like to generate fake data to test things out you can pass an argument `--generateFakeData --simulateRandomData` which will automatically generate CSV and JSON data for the program to use on the fly without any other necessary arguments
