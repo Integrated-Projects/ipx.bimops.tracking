@@ -12,7 +12,7 @@ public class Program
     private static bool ShouldUploadData = true; // Tracks session state
     private static bool SessionUploadComplete = true;
     private static int _cursor = 0;
-    private static int _chunkSize = 100;
+    private static int _chunkSize = 10;
     private static FileWatcher? watcherCSV;
     private static bool ShouldGenerateFakeData = false;
     private static bool ShouldSimulateRandomData = false;
@@ -79,7 +79,7 @@ public class Program
 
         // write this to a CSV close to the application
         File.WriteAllText(PathCSV, csvData);
-        var lineCount = File.ReadLines(PathCSV).Count() - 1;
+        var lineCount = csvData.Count(c => c == '\n') - 1;
 
         // write this to a JSON close to the application
         _sessionHandler.WriteSessionInfoToJSON(PathJSON, id.ToString(), lineCount, 0, true);
@@ -161,7 +161,7 @@ public class Program
             if (ShouldSimulateRandomData)
             {
                 Console.WriteLine("Simulating random data...");
-                var randomData = ModelTrackingDataCreator.Create(Math.Max(1, new Random().Next(1, _chunkSize)));
+                var randomData = ModelTrackingDataCreator.Create(Math.Max(1, new Random().Next(1, _chunkSize) + Math.Max(1, new Random().Next(1, _chunkSize))));
                 var lineCount = File.ReadLines(PathCSV).Count() - 1;
                 var csvData = $"\n{string.Join("\n", randomData.Select(d => d.ToCSV()))}";
                 File.AppendAllText(PathCSV, csvData);

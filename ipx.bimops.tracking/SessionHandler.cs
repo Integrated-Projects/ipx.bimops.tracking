@@ -61,7 +61,7 @@ public class SessionHandler : ISessionHandler
                 Console.WriteLine($"The file is locked: {ex.Message}");
                 var iter = retryAttempt + 1;
                 Thread.Sleep(50 * iter);
-                WriteSessionInfoToJSON(filePath, sessionId, sessionLastWrite, sessionLastRead, sessionActive, iter);
+                WriteSessionInfoToJSON(filePath, sessionId ?? sessionPrev?.SessionId, sessionLastWrite ?? sessionPrev?.LastWrite, sessionLastRead ?? sessionPrev?.LastRead, sessionActive ?? sessionPrev?.SessionActive, iter);
             }
 
             return false;
