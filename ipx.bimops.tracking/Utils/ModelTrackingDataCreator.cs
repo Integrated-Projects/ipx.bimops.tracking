@@ -20,10 +20,10 @@ public static class ModelTrackingDataCreator
                 id_user_ip_address = $"{random.Next(192, 255)}.{random.Next(0, 255)}.{random.Next(0, 255)}.{random.Next(0, 255)}",
                 timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
                 id_element = i % 2 == 0 ? Guid.NewGuid().ToString() : null,
-                type_element = i % 2 == 0 ? "Wall" : null,
-                duration = i % 2 == 0 ? random.Next(10, 300) : null,
+                type_element = i % 3 == 0 ? "Wall" : null,
+                duration = i % 8 == 0 ? random.Next(10, 300) : null,
                 action_project = (action_project)random.Next(0, 5),
-                action_element = i % 2 == 0 ? (action_element)random.Next(0, 2) : null
+                action_element = i % 4 == 0 ? (action_element)random.Next(0, 2) : null
             });
         }
 

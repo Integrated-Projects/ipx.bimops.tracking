@@ -15,6 +15,7 @@ public class Program
     private static int _chunkSize = 100;
     private static FileWatcher? watcherCSV;
     private static bool ShouldGenerateFakeData = false;
+    private static bool ShouldSimulateRandomData = false;
 
     public static void SetSessionHandler(ISessionHandler sessionHandler)
     {
@@ -28,11 +29,14 @@ public class Program
         * 1. --generateFakeData (no value necessary)
         * 2. --pathToCSV="path/to/csv"
         * 3. --pathToJSON="path/to/json"
+        * 4. --simulateRandomData (no value necessary)
         * @param args
     */
     public static void ValidateArgs(string[]? args)
     {
+        Console.WriteLine("Validating arguments...");
         ShouldGenerateFakeData = args != null && args.Length > 0 && args.Any(arg => arg == "--generateFakeData");
+        ShouldSimulateRandomData = args != null && args.Length > 0 && args.Any(arg => arg == "--simulateRandomData");
 
         if (ShouldGenerateFakeData)
         {
@@ -65,7 +69,7 @@ public class Program
     {
         Console.WriteLine($"Generating fake data and setting the CSV & JSON paths accordingly");
         // if generate fake data, use the modeldata creator to create some data
-        var data = ModelTrackingDataCreator.Create(100);
+        var data = ModelTrackingDataCreator.Create(Math.Max(1, new Random().Next(1, _chunkSize)));
         var id = Guid.NewGuid();
 
         // set PATHCSV & PATHJSON
@@ -75,7 +79,7 @@ public class Program
 
         // write this to a CSV close to the application
         File.WriteAllText(PathCSV, csvData);
-        var lineCount = File.ReadLines(PathCSV).Count();
+        var lineCount = File.ReadLines(PathCSV).Count() - 1;
 
         // write this to a JSON close to the application
         _sessionHandler.WriteSessionInfoToJSON(PathJSON, id.ToString(), lineCount, 0, true);
@@ -102,11 +106,11 @@ public class Program
         _cursor = session.LastRead ?? 0;
 
         // If I reach the MAX, I should continue watching the JSON for changes until the session marks itself as `inactive`
-        if (_cursor == session.LastWrite)
-        {
-            Console.WriteLine($"The Program has completed writing all relevant data at the moment");
-            ShouldUploadData = false;
-        }
+        // if (_cursor == session.LastWrite)
+        // {
+        //     Console.WriteLine($"The Program has completed writing all relevant data at the moment");
+        //     ShouldUploadData = false;
+        // }
 
         // But if the session is inactive AND I've already uploaded everything, the session is complete
         SessionUploadComplete = !IsSessionActive && !ShouldUploadData;
@@ -142,7 +146,8 @@ public class Program
                 var session = _sessionHandler.GetSessionInfoFromJSON(PathJSON);
                 // I should send off chunks of the CSV 100 at at time until I have reached the MAX
                 var chunks = CSVParser.ProcessCsvInChunks(PathCSV, _chunkSize, _cts.Token, _cursor);
-                var chunkCount = chunks.Count(); // may have fewer than 100 chunks 
+                var chunkCount = chunks.Count(); // get the amount of chunks
+                Console.WriteLine($"Uploading {chunkCount} chunks to Airtable");
                 await AirtableUploader.UploadChunksToAirtable(chunks, chunkCount, AppSettingsService.GetCreds("appsettings.json"), _cts.Token);
                 _cursor += chunkCount; // update cursor with the amount of items uploaded
                 _sessionHandler.WriteSessionInfoToJSON(PathJSON, null, null, _cursor);
@@ -151,6 +156,17 @@ public class Program
             // wait a second before restarting the loop to upload
             Console.WriteLine("Resting for 1 second");
             Thread.Sleep(1000);
+
+            // if simulateRandomData is true, I should generate some random data
+            if (ShouldSimulateRandomData)
+            {
+                Console.WriteLine("Simulating random data...");
+                var randomData = ModelTrackingDataCreator.Create(Math.Max(1, new Random().Next(1, _chunkSize)));
+                var lineCount = File.ReadLines(PathCSV).Count() - 1;
+                var csvData = $"\n{string.Join("\n", randomData.Select(d => d.ToCSV()))}";
+                File.AppendAllText(PathCSV, csvData);
+                _sessionHandler.WriteSessionInfoToJSON(PathJSON, null, lineCount, null, true);
+            }
         }
         Console.WriteLine("Program complete!");
     }
