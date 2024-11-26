@@ -125,7 +125,8 @@ public class Program
     public static async Task Main(string[]? args)
     {
         Console.WriteLine("Starting program...");
-        ValidateArgs(args);
+        var splitArgs = args != null ? args.Select(arg => arg.Split(" ")).SelectMany(arg => arg).ToArray() : null;
+        ValidateArgs(splitArgs);
 
         Console.WriteLine("Setting session data.");
         SetSessionData();
