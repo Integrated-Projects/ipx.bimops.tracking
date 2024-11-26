@@ -1,5 +1,5 @@
 using AirtableApiClient;
-
+using ipx.bimops.core;
 namespace ipx.bimops.tracking;
 
 public static class AirtableUploader
@@ -43,12 +43,12 @@ public static class AirtableUploader
 
                 if (res.Success)
                 {
-                    Console.WriteLine($"Record {schema.id_document} uploaded successfully");
+                    LoggingService.LogInfo($"Record {schema.id_document} uploaded successfully");
                 }
                 else
                 {
-                    Console.WriteLine($"Record {schema.id_document} failed to upload");
-                    Console.WriteLine($"Error for record {schema.id_document} - {res.AirtableApiError.DetailedErrorMessage}");
+                    LoggingService.LogInfo($"Record {schema.id_document} failed to upload");
+                    LoggingService.LogInfo($"Error for record {schema.id_document} - {res.AirtableApiError.DetailedErrorMessage}");
                 }
             }
         }

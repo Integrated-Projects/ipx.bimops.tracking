@@ -1,7 +1,9 @@
 bin
 obj
 .DS_Store
-
+*.vspscc
+*.vssscc
+*.vs
 /ipx.bimops.tracking/appsettings.json
 .DS_Store
 /ipx.bimops.tracking.tests/.DS_Store
