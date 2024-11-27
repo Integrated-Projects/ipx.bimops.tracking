@@ -24,6 +24,18 @@ public class ProgramTests
     }
 
     [Test]
+    public void Program_ShouldThrowExceptionIfNoCSVPath()
+    {
+        Assert.Throws<Exception>(() => Program.ValidateArgs([""]));
+    }
+
+    [Test]
+    public void Program_ShouldThrowExceptionIfNoJSONPath()
+    {
+        Assert.Throws<Exception>(() => Program.ValidateArgs(["something"]));
+    }
+
+    [Test]
     public void Program_ShouldNotThrowExceptionIfPathToJSONandCSV()
     {
         Assert.DoesNotThrow(() => Program.ValidateArgs(["something.csv", "something.json"]));
@@ -59,20 +71,20 @@ public class ProgramTests
         Assert.That(GetPrivateField<int>("_cursor"), Is.EqualTo(75));
     }
 
-    // [Test]
-    // public void OnSessionDataUpdated_Should_Set_ShouldUploadData_To_False_When_Read_Equals_Write()
-    // {
-    //     // Arrange
-    //     var session = new Session { SessionActive = true, LastRead = 100, LastWrite = 100 };
-    //     _sessionHandlerMock.Setup(sh => sh.GetSessionInfoFromJSON(It.IsAny<string>())).Returns(session);
+    [Test]
+    public void OnSessionDataUpdated_Should_Set_ShouldUploadData_To_False_When_Read_Equals_Write()
+    {
+        // Arrange
+        var session = new Session { SessionActive = true, LastRead = 100, LastWrite = 100 };
+        _sessionHandlerMock.Setup(sh => sh.GetSessionInfoFromJSON(It.IsAny<string>())).Returns(session);
 
-    //     // Act
-    //     Program.OnSessionDataUpdated("dummyPath");
-    //     Task.Delay(100).Wait(); // Simulate async delay
+        // Act
+        Program.OnSessionDataUpdated("dummyPath");
+        Task.Delay(100).Wait(); // Simulate async delay
 
-    //     // Assert
-    //     Assert.That(GetPrivateField<bool>("ShouldUploadData"), Is.EqualTo(false));
-    // }
+        // Assert
+        Assert.That(GetPrivateField<bool>("ShouldUploadData"), Is.EqualTo(false));
+    }
 
     [Test]
     public void OnSessionDataUpdated_Should_Set_SessionUploadComplete_When_Not_Active_And_Should_Not_Upload()
