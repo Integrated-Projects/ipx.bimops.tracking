@@ -22,6 +22,7 @@ public static class ModelTrackingDataCreator
                 timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(),
                 id_element = i % 2 == 0 ? Guid.NewGuid().ToString() : null,
                 type_element = i % 3 == 0 ? "Wall" : null,
+                title_document = "Ipx title",
                 duration = i % 8 == 0 ? random.Next(10, 300) : null,
                 action_project = (action_project)random.Next(0, 5),
                 action_element = i % 4 == 0 ? (action_element)random.Next(0, 2) : null
@@ -37,7 +38,7 @@ public static class ModelTrackingDataCreator
         {
             LoggingService.LogInfo($"Project ID: {record.id_project}, Document ID: {record.id_document}, User ID: {record.id_user}, " +
                 $"IP Address: {record.id_user_ip_address}, Timestamp: {record.timestamp}, " +
-                $"Element ID: {record.id_element}, Element Type: {record.type_element}, Duration: {record.duration}");
+                $"Element ID: {record.id_element}, Element Type: {record.type_element}, Title Document {record.title_document}, Duration: {record.duration}");
         }
     }
 }

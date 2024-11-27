@@ -42,6 +42,7 @@ public class ModelerTrackingSchemaMap : ClassMap<ModelerTrackingSchema>
         Map(m => m.timestamp);
         Map(m => m.id_element);
         Map(m => m.type_element);
+        Map(m => m.title_document);
         Map(m => m.duration).TypeConverter<NullableDoubleConverter>();
         Map(m => m.action_project).TypeConverter<NullableEnumConverter<action_project>>();
         Map(m => m.action_element).TypeConverter<NullableEnumConverter<action_element>>();
