@@ -1,5 +1,6 @@
 ﻿using ipx.bimops.core;
 using System.Reflection.Metadata;
+using System.Text.Json;
 
 namespace ipx.bimops.tracking;
 
@@ -50,17 +51,15 @@ public class Program
 
             if (csvIndex)
             {
-                PathCSV = args != null && args.Length > 0 ? args.First(arg => arg.Contains("--pathToCSV")).Split("=")[1] : null;
+                var IndexCSV = Array.FindIndex(args, arg => arg.Contains("--pathToCSV"));
+                PathCSV = args[IndexCSV].Substring(args[IndexCSV].IndexOf('=') + 1);
             }
 
             if (jsonIndex)
             {
-                PathJSON = args != null && args.Length > 0 ? args.First(arg => arg.Contains("--pathToJSON")).Split("=")[1] : null;
+                var IndexJSON = Array.FindIndex(args, arg => arg.Contains("--pathToJSON"));
+                PathCSV = args[IndexJSON].Substring(args[IndexJSON].IndexOf('=') + 1);
             }
-
-            //for debugging
-            PathCSV = @"F:\c901aefc1ebd4e5699346ed09c10f1b1.csv";
-            PathJSON = @"F:\c901aefc1ebd4e5699346ed09c10f1b1.json";
         }
 
         if (PathCSV == null)
@@ -137,11 +136,11 @@ public class Program
         Task.Run(SetSessionData);
     }
 
-    public static async Task Main(string[]? args)
+    public static async Task Main(string[] args)
     {
         LoggingService.LogInfo("Starting program...");
-        var splitArgs = args != null ? args.Select(arg => arg.Split(" ")).SelectMany(arg => arg).ToArray() : null;
-        ValidateArgs(splitArgs);
+        LoggingService.LogInfo($" args are: {args[0]},{args[1]} ,  length is {args.Length}");
+        ValidateArgs(args);
 
         LoggingService.LogInfo("Setting session data.");
         SetSessionData();
