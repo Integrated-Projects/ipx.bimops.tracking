@@ -58,7 +58,7 @@ public class Program
             if (jsonIndex)
             {
                 var IndexJSON = Array.FindIndex(args, arg => arg.Contains("--pathToJSON"));
-                PathCSV = args[IndexJSON].Substring(args[IndexJSON].IndexOf('=') + 1);
+                PathJSON = args[IndexJSON].Substring(args[IndexJSON].IndexOf('=') + 1);
             }
         }
 
