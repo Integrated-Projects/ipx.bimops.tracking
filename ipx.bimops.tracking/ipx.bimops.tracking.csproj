@@ -16,6 +16,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\ipx.bimops\src\ipx.bimops.core\ipx.bimops.core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="appsettings.sample.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

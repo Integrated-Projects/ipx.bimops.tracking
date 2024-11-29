@@ -6,7 +6,7 @@ public class ModelerTrackingSchema
     public required string id_document { get; set; }
     public required string id_user { get; set; }
     public required string id_user_ip_address { get; set; }
-    public required long timestamp { get; set; }
+    public required string timestamp { get; set; }
     public required string? id_element { get; set; }
     public required string? type_element { get; set; }
     public string? title_document { get; set; }
@@ -32,11 +32,13 @@ public enum action_project
     SUBMIT,
     CLOSE,
     IDLE_BEGIN,
-    IDLE_END
+    IDLE_END,
+    NONE = -1
 }
 public enum action_element
 {
     CREATE,
     MODIFY,
-    DELETE
+    DELETE,
+    NONE = -1
 }

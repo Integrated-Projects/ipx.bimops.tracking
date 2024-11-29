@@ -1,3 +1,4 @@
+using ipx.bimops.core;
 using Microsoft.Extensions.Configuration;
 
 namespace ipx.bimops.tracking;
@@ -7,8 +8,11 @@ public class AppSettingsService
     public static AppSettings GetCreds(string settingsFilePath = "")
     {
         if (settingsFilePath == "")
-            throw new Exception("Must have a valid appsettings.json loaded");
-
+        {
+            Exception ex =  new Exception("Must have a valid appsettings.json loaded");
+            LoggingService.LogError($"An error occurred: {ex.Message}", ex);
+        }
+            
         var configuration = new ConfigurationBuilder()
             .AddJsonFile(settingsFilePath)
             .Build();

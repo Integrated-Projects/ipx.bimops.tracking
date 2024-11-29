@@ -1,6 +1,7 @@
 using CsvHelper;
 using CsvHelper.Configuration;
 using CsvHelper.TypeConversion;
+using ipx.bimops.core;
 
 namespace ipx.bimops.tracking;
 
@@ -41,6 +42,7 @@ public class ModelerTrackingSchemaMap : ClassMap<ModelerTrackingSchema>
         Map(m => m.timestamp);
         Map(m => m.id_element);
         Map(m => m.type_element);
+        Map(m => m.title_document);
         Map(m => m.duration).TypeConverter<NullableDoubleConverter>();
         Map(m => m.action_project).TypeConverter<NullableEnumConverter<action_project>>();
         Map(m => m.action_element).TypeConverter<NullableEnumConverter<action_element>>();
@@ -67,7 +69,11 @@ public class NullableDoubleConverter : DefaultTypeConverter
             return intResult;
         }
 
-        throw new TypeConverterException(this, memberMapData, text, row.Context);
+        Exception ex = new TypeConverterException(this, memberMapData, text, row.Context);
+        LoggingService.LogError($"An error occurred: {ex.Message}", ex);
+
+        return null;
+        
     }
 }
 
@@ -85,7 +91,10 @@ public class NullableEnumConverter<T> : DefaultTypeConverter where T : struct, E
             return result;
         }
 
-        throw new TypeConverterException(this, memberMapData, text ?? "null", row.Context);
+        Exception ex = new TypeConverterException(this, memberMapData, text ?? "null", row.Context);
+        LoggingService.LogError($"An error occurred: {ex.Message}", ex);
+
+        return null;
     }
 
     public override string? ConvertToString(object? value, IWriterRow row, MemberMapData memberMapData)

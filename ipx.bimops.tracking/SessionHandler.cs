@@ -1,5 +1,6 @@
 using System;
 using System.Text.Json;
+using ipx.bimops.core;
 
 namespace ipx.bimops.tracking;
 
@@ -21,11 +22,11 @@ public class SessionHandler : ISessionHandler
             session = JsonSerializer.Deserialize<Session>(jsonString);
 
             if (session == null)
-                Console.WriteLine("Failed to deserialize session data.");
+                LoggingService.LogInfo("Failed to deserialize session data.");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"An error occurred: {ex.Message}");
+            LoggingService.LogError($"An error occurred: {ex.Message}", ex);
         }
 
         return session;
@@ -58,11 +59,13 @@ public class SessionHandler : ISessionHandler
         {
             if (retryAttempt < 10)
             {
-                Console.WriteLine($"The file is locked: {ex.Message}");
+                LoggingService.LogInfo($"The file is locked: {ex.Message}");
                 var iter = retryAttempt + 1;
                 Thread.Sleep(50 * iter);
-                WriteSessionInfoToJSON(filePath, sessionId, sessionLastWrite, sessionLastRead, sessionActive, iter);
+                WriteSessionInfoToJSON(filePath, sessionId ?? sessionPrev?.SessionId, sessionLastWrite ?? sessionPrev?.LastWrite, sessionLastRead ?? sessionPrev?.LastRead, sessionActive ?? sessionPrev?.SessionActive, iter);
             }
+
+            LoggingService.LogError($"An error occurred: {ex.Message}", ex);
 
             return false;
         }
